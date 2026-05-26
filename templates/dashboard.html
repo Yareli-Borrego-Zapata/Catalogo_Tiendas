@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Panel de Control</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">⚙️ Panel del Comerciante</a>
+            <a href="/logout" class="btn btn-sm btn-danger">Cerrar Sesión</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-5">
+                <div class="card shadow-sm p-4">
+                    <h4 class="fw-bold text-secondary mb-3">Configurar mi Negocio</h4>
+                    <form method="POST" enctype="multipart/form-data">
+                        <div class="mb-3 text-center">
+                            <img src="/static/uploads/{{ negocio.ruta_logo if negocio else 'default_logo.png' }}" class="rounded-circle img-thumbnail mb-2" style="width: 100px; height: 100px; object-fit: cover;">
+                            <label class="form-label d-block">Logo de la Tienda:</label>
+                            <input type="file" name="logo" class="form-control form-control-sm">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Nombre de la Tienda:</label>
+                            <input type="text" name="nombre_negocio" value="{{ negocio.nombre_negocio if negocio else '' }}" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Teléfono / WhatsApp:</label>
+                            <input type="text" name="telefono" value="{{ negocio.telefono if negocio else '' }}" class="form-control" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Colonia:</label>
+                            <input type="text" name="colonia" value="{{ negocio.nombre_colonia if negocio else '' }}" class="form-control" placeholder="Ej. La Chaveña" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Categoría:</label>
+                            <select name="categoria" class="form-select">
+                                {% for cat in categorias %}
+                                    <option value="{{ cat.id_categoria }}" {% if negocio and negocio.id_categoria == cat.id_categoria %}selected{% endif %}>{{ cat.nombre_categoria }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Paleta de Colores (Personalización):</label>
+                            <select name="tema_color" class="form-select bg-light fw-semibold">
+                                <option value="primary" {% if negocio and negocio.tema_color == 'primary' %}selected{% endif %}>🔵 Azul Corporativo</option>
+                                <option value="success" {% if negocio and negocio.tema_color == 'success' %}selected{% endif %}>🟢 Verde Ecológico</option>
+                                <option value="danger" {% if negocio and negocio.tema_color == 'danger' %}selected{% endif %}>🔴 Rojo Vibrante</option>
+                                <option value="warning" {% if negocio and negocio.tema_color == 'warning' %}selected{% endif %}>🟡 Amarillo Comercial</option>
+                                <option value="dark" {% if negocio and negocio.tema_color == 'dark' %}selected{% endif %}>⚫ Negro Minimalista</option>
+                                <option value="rosa" {% if negocio and negocio.tema_color == 'rosa' %}selected{% endif %}>🌸 Rosa Pastel</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción:</label>
+                            <textarea name="descripcion" class="form-control" rows="3">{{ negocio.descripcion if negocio else '' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Actualizar Datos</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                {% if negocio %}
+                <div class="card shadow-sm p-4 mb-4">
+                    <h4 class="fw-bold text-secondary mb-3">Subir Nuevo Producto</h4>
+                    <form action="/agregar_producto" method="POST" enctype="multipart/form-data" class="row g-2">
+                        <div class="col-sm-6">
+                            <input type="text" name="nombre_producto" class="form-control" placeholder="Nombre del artículo" required>
+                        </div>
+                        <div class="col-sm-3">
+                            <input type="number" step="0.01" name="precio" class="form-control" placeholder="Precio ($)" required>
+                        </div>
+                        <div class="col-sm-3">
+                            <button type="submit" class="btn btn-success w-100 fw-bold">+ Añadir</button>
+                        </div>
+                        <div class="col-12 mt-2">
+                            <label class="form-label small text-muted">Foto del producto:</label>
+                            <input type="file" name="foto" class="form-control form-control-sm">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h4 class="fw-bold text-secondary m-0">Mis Productos</h4>
+                        <a href="/negocio/{{ negocio.id_negocio }}" target="_blank" class="btn btn-sm btn-outline-info">👁️ Ver Vista Pública</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for prod in productos %}
+                                <tr>
+                                    <td>
+                                        <img src="/static/uploads/{{ prod.ruta_imagen }}" class="rounded" style="width: 50px; height: 50px; object-fit: cover;">
+                                    </td>
+                                    <td class="fw-bold">{{ prod.nombre_producto }}</td>
+                                    <td class="text-success fw-bold">${{ prod.precio }}</td>
+                                    <td>
+                                        <a href="/eliminar_producto/{{ prod.id_producto }}" class="btn btn-sm btn-outline-danger">Eliminar</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning text-center p-5">
+                    <h5>⚠️ Primero debes configurar los datos de tu negocio a la izquierda para poder subir productos.</h5>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
