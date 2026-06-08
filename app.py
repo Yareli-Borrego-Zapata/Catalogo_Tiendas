@@ -8,7 +8,7 @@ app.secret_key = 'clave_secreta_para_la_tesis_juarez'
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploads')
 
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
+#para concecyar con pymysql
 def conectar_db():
     return pymysql.connect(
         host='127.0.0.1',
@@ -30,7 +30,7 @@ def inicio():
     with conexion.cursor() as cursor:
         cursor.execute("SELECT * FROM categorias ORDER BY nombre_categoria ASC")
         categorias = cursor.fetchall()
-        # Modificado para traer todos los negocios y mostrarlos inicialmente
+        #aqui se muestran todos los negocios inicialmente 
         cursor.execute("SELECT * FROM negocios")
         resultados = cursor.fetchall()
     conexion.close()
@@ -114,16 +114,16 @@ def dashboard():
         colonia = request.form['colonia'].strip().upper()
         categoria = request.form['categoria']
         tema = request.form['tema_color']
-        logo = request.files['logo'] # Recibimos el logo
+        logo = request.files['logo'] #Aqui registramos el loggo
         
         with conexion.cursor() as cursor:
             cursor.execute("SELECT * FROM negocios WHERE id_vendedor = %s", (vendedor_id,))
             negocio = cursor.fetchone()
             
-            # Lógica para guardar el logo
+            #Aqui guardamos el logo
             nombre_logo = negocio['ruta_logo'] if negocio else 'default_logo.png'
             if logo:
-                # Usamos el ID del vendedor para nombrar el logo de forma única
+                #logo idppara que cada vendedor tenga su logoo uncio
                 nombre_logo = f"logo_{vendedor_id}_{logo.filename}"
                 logo.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_logo))
 
@@ -174,7 +174,7 @@ def agregar_producto():
                 foto.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre_foto))
                 
             cursor.execute("INSERT INTO productos (id_negocio, nombre_producto, precio, ruta_imagen) VALUES (%s, %s, %s, %s)",
-                           (negocio['id_negocio'], nombre_prod, precio, nombre_foto))
+                        (negocio['id_negocio'], nombre_prod, precio, nombre_foto))
             conexion.commit()
     conexion.close()
     return redirect(url_for('dashboard'))
