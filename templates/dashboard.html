@@ -42,7 +42,6 @@
             {% endif %}
         {% endwith %}
 
-    
         {% if negocio %}
         <div class="row g-3 mb-4">
             <div class="col-6 col-md-3">
@@ -157,22 +156,40 @@
                                     <i class="bi bi-palette me-1 text-muted"></i>Color del catálogo
                                 </label>
                                 <select name="tema_color" class="form-select rounded-3">
-                                    <option value="primary"  {% if negocio and negocio.tema_color == 'primary'  %}selected{% endif %}>🔵 Azul</option>
-                                    <option value="success"  {% if negocio and negocio.tema_color == 'success'  %}selected{% endif %}>🟢 Verde</option>
-                                    <option value="danger"   {% if negocio and negocio.tema_color == 'danger'   %}selected{% endif %}>🔴 Rojo</option>
-                                    <option value="warning"  {% if negocio and negocio.tema_color == 'warning'  %}selected{% endif %}>🟡 Amarillo</option>
-                                    <option value="dark"     {% if negocio and negocio.tema_color == 'dark'     %}selected{% endif %}>⚫ Negro</option>
-                                    <option value="rosa"     {% if negocio and negocio.tema_color == 'rosa'     %}selected{% endif %}>🌸 Rosa</option>
+                                    <option value="primary" {% if negocio and negocio.tema_color == 'primary' %}selected{% endif %}>🔵 Azul</option>
+                                    <option value="success" {% if negocio and negocio.tema_color == 'success' %}selected{% endif %}>🟢 Verde</option>
+                                    <option value="danger"  {% if negocio and negocio.tema_color == 'danger'  %}selected{% endif %}>🔴 Rojo</option>
+                                    <option value="warning" {% if negocio and negocio.tema_color == 'warning' %}selected{% endif %}>🟡 Amarillo</option>
+                                    <option value="dark"    {% if negocio and negocio.tema_color == 'dark'    %}selected{% endif %}>⚫ Negro</option>
+                                    <option value="rosa"    {% if negocio and negocio.tema_color == 'rosa'    %}selected{% endif %}>🌸 Rosa</option>
                                 </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small">
+                                    <i class="bi bi-chat-left-text me-1 text-muted"></i>Descripción
+                                </label>
+                                <textarea name="descripcion" class="form-control rounded-3" rows="2"
+                                          placeholder="¿Qué vendes? ¿Cuál es tu horario?" maxlength="200">{{ negocio.descripcion if negocio else '' }}</textarea>
+                                <div class="form-text">Máximo 200 caracteres.</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold small">
+                                    <i class="bi bi-clock me-1 text-muted"></i>Horarios de atención
+                                </label>
+                                <textarea name="horario" class="form-control rounded-3" rows="2"
+                                          placeholder="Ej. Lun–Vie 9am–7pm, Sáb 10am–3pm" maxlength="255">{{ negocio.horario if negocio and negocio.horario else '' }}</textarea>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label fw-semibold small">
-                                    <i class="bi bi-chat-left-text me-1 text-muted"></i>Descripción
+                                    <i class="bi bi-pin-map me-1 text-muted"></i>Dirección completa
                                 </label>
-                                <textarea name="descripcion" class="form-control rounded-3" rows="3"
-                                          placeholder="¿Qué vendes? ¿Cuál es tu horario?" maxlength="200">{{ negocio.descripcion if negocio else '' }}</textarea>
-                                <div class="form-text">Máximo 200 caracteres.</div>
+                                <input type="text" name="direccion"
+                                       value="{{ negocio.direccion if negocio and negocio.direccion else '' }}"
+                                       class="form-control rounded-3"
+                                       placeholder="Ej. Calle Nogal 142, Col. La Chaveña" maxlength="255">
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100 fw-bold py-2 rounded-3">
@@ -183,7 +200,6 @@
                     </div>
                 </div>
             </div>
-
 
             <div class="col-lg-7">
                 {% if negocio %}
@@ -224,7 +240,6 @@
                     </div>
                 </div>
 
-               }
                 <div class="card border-0 shadow-sm" style="border-radius:1rem;">
                     <div class="card-header bg-white border-bottom py-3 px-4 d-flex justify-content-between align-items-center"
                          style="border-radius:1rem 1rem 0 0;">

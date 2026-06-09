@@ -57,7 +57,7 @@
                                 <i class="bi bi-tag-fill text-primary me-1"></i>Categoría
                             </label>
                             <select name="categoria" class="form-select form-select-lg rounded-3">
-                                <option value="0">— Todas las categorías —</option>
+                                <option value="0">Todas las categorías</option>
                                 {% for cat in categorias %}
                                     <option value="{{ cat.id_categoria }}">{{ cat.nombre_categoria }}</option>
                                 {% endfor %}
