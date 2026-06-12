@@ -20,7 +20,7 @@ def conectar_db():
         database='bd_tesis_juarez',
         cursorclass=pymysql.cursors.DictCursor
     )
-
+#verifica que el archivo tenga una extensión permitida antes de guardarlo.
 def extension_valida(nombre_archivo):
     return (
         '.' in nombre_archivo and
@@ -33,7 +33,7 @@ def guardar_imagen(archivo, prefijo, fallback):
         archivo.save(os.path.join(app.config['UPLOAD_FOLDER'], nombre))
         return nombre
     return fallback
-
+#decorador para proteger rutas que requieren autenticación, redirigiendo a la página de inicio de sesión si el usuario no ha iniciado sesión.
 def login_requerido(f):
     from functools import wraps
     @wraps(f)
@@ -50,7 +50,8 @@ def bienvenida():
         return redirect(url_for('inicio'))
     return render_template('bienvenida.html')
 
-@app.route('/inicio')
+#ruta principal que muestra todos los negocios registrados
+@app.route('/inicio')#muestra todos los negocios registrados, ordenados alfabéticamente por nombre, junto con sus categorías. También verifica si un vendedor ha iniciado sesión para mostrar opciones adicionales en la interfaz.
 def inicio():
     conexion = conectar_db()
     with conexion.cursor() as cursor:
@@ -66,7 +67,8 @@ def inicio():
         vendedor_logueado='vendedor_id' in session
     )
 
-@app.route('/buscar', methods=['POST'])
+#Filtra los negocios según la colonia y categoría seleccionada por el usuario.
+@app.route('/buscar', methods=['POST'])#Permite a los usuarios filtrar los negocios según la colonia y categoría seleccionada, mostrando solo aquellos que coincidan con los criterios de búsqueda. La búsqueda es flexible, permitiendo coincidencias parciales en el nombre de la colonia.
 def buscar():
     colonia_texto = request.form.get('colonia', '').strip().upper()
     categoria_id  = request.form.get('categoria', '0')
@@ -99,7 +101,7 @@ def buscar():
         busqueda=True,
         vendedor_logueado='vendedor_id' in session
     )
-
+#Muestra el catálogo de productos de un negocio específico, identificado por su ID. Si el negocio no existe, redirige al inicio con un mensaje de advertencia.
 @app.route('/negocio/<int:id>')
 def ver_negocio(id):
     conexion = conectar_db()
@@ -118,6 +120,7 @@ def ver_negocio(id):
     conexion.close()
     return render_template('catalogo.html', negocio=negocio, productos=productos)
 
+#Formulario de inicio de sesion y registro.
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if 'vendedor_id' in session:
@@ -167,12 +170,14 @@ def login():
 
     return render_template('login.html')
 
+#cierra la sesion del vendedorr.
 @app.route('/logout')
 def logout():
     session.clear()
     flash('Sesión cerrada correctamente.', 'info')
     return redirect(url_for('bienvenida'))
 
+#pandel de administracion del vendedor.
 @app.route('/dashboard', methods=['GET', 'POST'])
 @login_requerido
 def dashboard():
@@ -241,7 +246,7 @@ def dashboard():
         categorias=categorias,
         productos=mis_productos
     )
-
+#agregar productos al catalogo.
 @app.route('/agregar_producto', methods=['POST'])
 @login_requerido
 def agregar_producto():
@@ -283,6 +288,7 @@ def agregar_producto():
     conexion.close()
     return redirect(url_for('dashboard'))
 
+#eliminar productos del catalogo.
 @app.route('/eliminar_producto/<int:id>')
 @login_requerido
 def eliminar_producto(id):

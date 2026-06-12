@@ -17,7 +17,8 @@
 
     <div class="card border-0 shadow-lg" style="max-width:420px; width:100%; border-radius:1.25rem;">
         <div class="card-body p-4">
-
+            
+   muestra mensajes de error o éxito al intentar iniciar sesión o registrarse, utilizando el sistema de flash messages de Flask. Cada mensaje se muestra dentro de una alerta de Bootstrap con un ícono informativo y un botón para cerrar la alerta.
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     {% for category, msg in messages %}
